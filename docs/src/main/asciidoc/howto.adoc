@@ -1,0 +1,81 @@
+[[howto]]
+= "`How-to`" Guides
+include::_attributes.adoc[]
+
+This section provides answers to some common "`how do I do that...?`" questions
+that often arise when using {project-full-name}. Its coverage is not exhaustive, but it
+does cover quite a lot.
+
+If you have a specific problem that we do not cover here, you might want to check out
+https://stackoverflow.com/tags/{project-name}[stackoverflow.com] to see if someone has
+already provided an answer. Stack Overflow is also a great place to ask new questions (please use
+the `{project-name}` tag).
+
+We are also more than happy to extend this section. If you want to add a "`how-to`",
+send us a {github-code}[pull request].
+[[how-to-generate-pact-from-scc]]
+== How Can I Generate Pact, YAML, or X files from Spring Cloud Contract Contracts?
+
+Spring Cloud Contract comes with a `ToFileContractsTransformer` class that lets you dump
+contracts as files for the given `ContractConverter`. It contains a `static void main`
+method that lets you run the transformer as an executable. It takes the following
+arguments:
+
+- argument 1 : `FQN`: Fully qualified name of the `ContractConverter` (for example, `PactContractConverter`). *REQUIRED*.
+- argument 2 : `path`: Path where the dumped files should be stored. *OPTIONAL* -- defaults to `target/converted-contracts`.
+- argument 3 : `path`: Path were the contracts should be searched for. *OPTIONAL* -- defaults to `src/test/resources/contracts`.
+
+After calling the transformer, the Spring Cloud Contract files are processed and,
+depending on the provided FQN of the `ContractTransformer`, the contracts are transformed
+to the required format and dumped to the provided folder.
+
+The following example shows how to configure Pact integration for both Maven and Gradle:
+
+====
+[source,xml,indent=0,role="primary"]
+.Maven
+----
+<plugin>
+	<groupId>org.codehaus.mojo</groupId>
+	<artifactId>exec-maven-plugin</artifactId>
+	<version>1.6.0</version>
+	<executions>
+		<execution>
+			<id>convert-dsl-to-pact</id>
+			<phase>process-test-classes</phase>
+			<configuration>
+				<classpathScope>test</classpathScope>
+				<mainClass>
+					org.springframework.cloud.contract.verifier.util.ToFileContractsTransformer
+				</mainClass>
+				<arguments>
+					<argument>
+						org.springframework.cloud.contract.verifier.spec.pact.PactContractConverter
+					</argument>
+					<argument>${project.basedir}/target/pacts</argument>
+					<argument>
+						${project.basedir}/src/test/resources/contracts
+					</argument>
+				</arguments>
+			</configuration>
+			<goals>
+				<goal>java</goal>
+			</goals>
+		</execution>
+	</executions>
+</plugin>
+----
+
+[source,groovy,indent=0,role="secondary"]
+.Gradle
+----
+task convertContracts(type: JavaExec) {
+    main = "org.springframework.cloud.contract.verifier.util.ToFileContractsTransformer"
+    classpath = sourceSets.test.compileClasspath
+    args("org.springframework.cloud.contract.verifier.spec.pact.PactContractConverter",
+            "${project.rootDir}/build/pacts", "${project.rootDir}/src/test/resources/contracts")
+}
+
+test.dependsOn("convertContracts")
+----
+====

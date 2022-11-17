@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-contract-pact-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<artifactId>spring-cloud-contract-pact-samples</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>Spring Cloud Contract Pact Samples</name>
+	<description>Spring Cloud Contract Pact Samples</description>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<failIfNoTests>false</failIfNoTests>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- Invoke integration tests in the install phase, after the maven-plugin
+					 is available -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-invoker-plugin</artifactId>
+				<version>3.2.1</version>
+				<configuration>
+					<settingsFile>src/it/settings.xml</settingsFile>
+					<projectsDirectory>standalone</projectsDirectory>
+					<skipInvocation>${skipTests}</skipInvocation>
+					<streamLogs>true</streamLogs>
+					<pomIncludes>
+						<pomInclude>/pom.xml</pomInclude>
+						<!-- <pomInclude>producer_pact/pom.xml</pomInclude>
+						<pomInclude>consumer_pact_stubrunner/pom.xml</pomInclude>
+						<pomInclude>consumer_pact/pom.xml</pomInclude> -->
+					</pomIncludes>
+					<goals>
+						<goal>clean</goal>
+						<goal>install</goal>
+					</goals>
+				</configuration>
+				<executions>
+					<execution>
+						<id>integration</id>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

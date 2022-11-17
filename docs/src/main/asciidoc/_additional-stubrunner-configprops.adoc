@@ -1,0 +1,9 @@
+IMPORTANT: The following properties can be passed as a system property (for example, `stubrunner.properties.git.branch`), as an environment variable (for example, `STUBRUNNER_PROPERTIES_GIT_BRANCH`), or as a property inside stub runner's annotation or a JUnit Rule (JUnit 4) or Extension (JUnit 5). In the latter case, you can pass the `git.branch` property instead of `stubrunner.properties.git.branch`.
+
+.Stubrunner Properties Options
+|===
+|Name | Default | Description
+
+|`stubrunner.properties.pactbroker.provider-name-with-group-id` | `false` | When using the Pact Broker-based approach, you can automatically group ID to the provider name.
+
+|===
